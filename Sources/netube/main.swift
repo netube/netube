@@ -25,3 +25,9 @@ let configuration: Configuration = Configuration(
         cipher: .chacha20poly1305
 )
 print(configuration)
+
+let port: Int = 1984
+let server: EchoServer = EchoServer(port: port)
+print("Connect with a command line window by entering 'telnet ::1 \(port)'")
+
+server.run()
