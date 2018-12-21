@@ -1,0 +1,19 @@
+# macOS
+*.DS_Store
+
+# Swift
+/build
+/.build
+/Packages
+Package.resolved
+
+# Xcode
+/*.xcodeproj
+
+# JetBraians
+/.idea
+/cmake-build-debug
+/cmake-build-release
+
+# Visual Studio Code
+/.vscode
