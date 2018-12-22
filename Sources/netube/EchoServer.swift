@@ -108,18 +108,20 @@ class EchoServer {
                 data.count = 0
         }
         private func response(message: String, socket: Socket, isConnected: inout Bool) throws {
-                if message.lowercased.hasPrefix(EchoServer.shutdownCommand) {
+
+                // Drop the last: \n
+                let text: String = String(message.lowercased().dropLast())
+
+                switch text {
+                case EchoServer.quitCommand:
+                        isConnected = false
+                case EchoServer.shutdownCommand:
                         print("Shutdown requested by connection at \(socket.remoteHostname):\(socket.remotePort)")
                         shutdownServer()
-                        return
-                }
-                print("Server received from connection at \(socket.remoteHostname):\(socket.remotePort): \(message) ")
-                let echo: String = "Server response: \n\(message)\n"
-                try socket.write(from: echo)
-
-                if message.lowercased.hasPrefix(EchoServer.quitCommand) ||
-                           message.lowercased.hasSuffix(EchoServer.quitCommand) {
-                        isConnected = false
+                default:
+                        print("Server received from connection at \(socket.remoteHostname):\(socket.remotePort): \(message) ")
+                        let echo: String = "Server response: \n\(message)\n"
+                        try socket.write(from: echo)
                 }
         }
 
