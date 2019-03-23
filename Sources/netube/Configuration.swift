@@ -16,22 +16,28 @@
 // -------------------------------------------------------------------------
 //
 
-struct Configuration: CustomStringConvertible {
+struct Configuration: CustomStringConvertible
+{
         let leftHost: String
         let leftPort: Int
         let rightHost: String
         let rightPort: Int
         let secret: String
         let cipher: Cipher
-        
-        var description: String {
+        let hash: Hash
+        let exchange: Exchange
+
+        var description: String
+        {
                 return """
-                left_host : \(leftHost)
-                left_port : \(leftPort)
-                right_host: \(rightHost)
-                right_port: \(rightPort)
-                secret    : \(secret)
-                cipher    : \(cipher)
-                """
+                       left_host : \(leftHost)
+                       left_port : \(leftPort)
+                       right_host: \(rightHost)
+                       right_port: \(rightPort)
+                       secret    : \(secret)
+                       cipher    : \(cipher.rawValue)
+                       hash      : \(hash.rawValue)
+                       exchange  : \(exchange.rawValue)
+                       """
         }
 }

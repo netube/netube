@@ -16,6 +16,7 @@
 // -------------------------------------------------------------------------
 //
 
-struct Encryption {
-        static func encrypt() {}
+enum Hash: String
+{
+        case sha2_256 = "SHA2-256"
 }

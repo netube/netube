@@ -18,15 +18,17 @@
 
 let configuration: Configuration = Configuration(
         leftHost: "0.0.0.0",
-        leftPort: 443,
+        leftPort: 56789,
         rightHost: "8.8.8.8",
-        rightPort: 2333,
+        rightPort: 443,
         secret: "EyesOnly",
-        cipher: .chacha20poly1305
+        cipher: .xchacha20poly1305,
+        hash: .sha2_256,
+        exchange: .x25519
 )
 print(configuration)
 
-let port: Int = 1984
+let port: Int = 54321
 let server: EchoServer = EchoServer(port: port)
 print("Connect with a command line window by entering 'telnet ::1 \(port)'")
 
