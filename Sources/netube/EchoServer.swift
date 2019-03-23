@@ -35,10 +35,8 @@ class EchoServer {
 
                                 repeat {
                                         let newSocket: Socket = try socket.acceptClientConnection()
-                                        print("Accepted connection from: " +
-                                                "\(newSocket.remoteHostname) on port \(newSocket.remotePort)")
-                                        print("Socket Signature: " +
-                                                "\(String(describing: newSocket.signature?.description))")
+                                        print("Accepted connection from: \(newSocket.remoteHostname) on port \(newSocket.remotePort)")
+                                        print("Socket Signature: \(String(describing: newSocket.signature?.description))")
 
                                         self.connect(socket: newSocket)
                                 } while self.isRunning
@@ -68,8 +66,7 @@ class EchoServer {
                 var isConnected: Bool = true
                 var readData: Data = Data(capacity: EchoServer.bufferSize)
                 do {
-                        try socket.write(from: "Hello, type '\(EchoServer.quitCommand)' to end session " +
-                                "or '\(EchoServer.shutdownCommand)' to stop server.\n")
+                        try socket.write(from: "Hello, type '\(EchoServer.quitCommand)' to end session or '\(EchoServer.shutdownCommand)' to stop server.\n")
                         repeat {
                                 try handle(data: &readData, socket: socket, isConnected: &isConnected)
                         } while isConnected
@@ -81,13 +78,11 @@ class EchoServer {
                         }
                 } catch let error {
                         guard let socketError: Socket.Error = error as? Socket.Error else {
-                                print("Unexpected error by connection at " +
-                                        "\(socket.remoteHostname):\(socket.remotePort)...")
+                                print("Unexpected error by connection at \(socket.remoteHostname):\(socket.remotePort)...")
                                 return
                         }
                         if self.isRunning {
-                                print("Error reported by connection at " +
-                                        "\(socket.remoteHostname):\(socket.remotePort):\n \(socketError.description)")
+                                print("Error reported by connection at \(socket.remoteHostname):\(socket.remotePort):\n \(socketError.description)")
                         }
                 }
         }
