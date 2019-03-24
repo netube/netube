@@ -1,6 +1,6 @@
 //
 // -------------------------------------------------------------------------
-// Copyright 2018 Bing Djeung
+// Copyright 2018-2019 Bing Djeung
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 // -------------------------------------------------------------------------
 //
 
-enum Cipher: String
-{
+enum Cipher: String {
         case xchacha20poly1305 = "AEAD_XCHACHA20_POLY1305"
         case chacha20poly1305 = "AEAD_CHACHA20_POLY1305"
         case aes256gcm = "AEAD_AES_256_GCM"

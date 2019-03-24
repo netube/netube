@@ -1,6 +1,6 @@
 //
 // -------------------------------------------------------------------------
-// Copyright 2018 Bing Djeung
+// Copyright 2018-2019 Bing Djeung
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,8 @@
 // -------------------------------------------------------------------------
 //
 
-enum Hash: String
-{
+enum Hash: String {
         case sha2_256 = "SHA2-256"
+        case sha2_384 = "SHA2-384"
+        case sha2_512 = "SHA2-512"
 }

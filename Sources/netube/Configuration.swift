@@ -1,6 +1,6 @@
 //
 // -------------------------------------------------------------------------
-// Copyright 2018 Bing Djeung
+// Copyright 2018-2019 Bing Djeung
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 // -------------------------------------------------------------------------
 //
 
-struct Configuration: CustomStringConvertible
-{
+struct Configuration: CustomStringConvertible {
         let leftHost: String
         let leftPort: Int
         let rightHost: String
@@ -27,8 +26,7 @@ struct Configuration: CustomStringConvertible
         let hash: Hash
         let exchange: Exchange
 
-        var description: String
-        {
+        var description: String {
                 return """
                        left_host : \(leftHost)
                        left_port : \(leftPort)

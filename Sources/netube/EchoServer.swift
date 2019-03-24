@@ -1,9 +1,26 @@
+//
+// -------------------------------------------------------------------------
+// Copyright 2018-2019 Bing Djeung
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// -------------------------------------------------------------------------
+//
+
 import Foundation
 import Dispatch
 import Socket
 
-class EchoServer
-{
+class EchoServer {
         private static let quitCommand: String = ":quit"
         private static let shutdownCommand: String = ":off"
         private static let bufferSize: Int = 4096
@@ -14,32 +31,25 @@ class EchoServer
         private var connectedSockets: [Int32: Socket] = [Int32: Socket]()
         private let socketLockQueue: DispatchQueue = DispatchQueue(label: "org.netube.socketLockQueue")
 
-        init(port: Int)
-        {
+        init(port: Int) {
                 self.port = port
         }
 
-        deinit
-        {
-                connectedSockets.values.forEach
-                {
+        deinit {
+                connectedSockets.values.forEach {
                         $0.close()
                 }
                 listenSocket?.close()
         }
 
-        func run()
-        {
+        func run() {
                 let queue = DispatchQueue.global(qos: .userInteractive)
-                queue.async
-                { [unowned self] in
-                        do
-                        {
+                queue.async { [unowned self] in
+                        do {
                                 try self.listenSocket = Socket.create(family: .inet6)
 
                                 guard let socket: Socket = self.listenSocket
-                                else
-                                {
+                                        else {
                                         print("Unable to unwrap socket...")
                                         return
                                 }
@@ -47,26 +57,20 @@ class EchoServer
                                 try socket.listen(on: self.port)
                                 print("Listening on port: \(socket.listeningPort)")
 
-                                repeat
-                                {
+                                repeat {
                                         let newSocket: Socket = try socket.acceptClientConnection()
                                         print("Accepted connection from: \(newSocket.remoteHostname) on port \(newSocket.remotePort)")
                                         print("Socket Signature: \(String(describing: newSocket.signature!.description))")
                                         self.connect(socket: newSocket)
-                                }
-                                while self.isRunning
+                                } while self.isRunning
 
-                        }
-                        catch let error
-                        {
+                        } catch let error {
                                 guard let socketError: Socket.Error = error as? Socket.Error
-                                else
-                                {
+                                        else {
                                         print("Unexpected error...")
                                         return
                                 }
-                                if self.isRunning
-                                {
+                                if self.isRunning {
                                         print("Error reported:\n \(socketError.description)")
                                 }
                         }
@@ -74,10 +78,8 @@ class EchoServer
                 dispatchMain()
         }
 
-        private func connect(socket: Socket)
-        {
-                socketLockQueue.sync
-                { [unowned self, socket] in
+        private func connect(socket: Socket) {
+                socketLockQueue.sync { [unowned self, socket] in
                         self.connectedSockets[socket.socketfd] = socket
                 }
                 DispatchQueue.global(qos: .default).async { [unowned self, socket] in
@@ -85,71 +87,56 @@ class EchoServer
                 }
         }
 
-        private func serve(socket: Socket)
-        {
+        private func serve(socket: Socket) {
                 var isConnected: Bool = true
                 var readData: Data = Data(capacity: EchoServer.bufferSize)
-                do
-                {
+                do {
                         try socket.write(from: "Hello, type '\(EchoServer.quitCommand)' to end session or '\(EchoServer.shutdownCommand)' to stop server.\n")
-                        repeat
-                        {
+                        repeat {
                                 try handle(data: &readData, socket: socket, isConnected: &isConnected)
-                        }
-                        while isConnected
+                        } while isConnected
 
                         print("Socket: \(socket.remoteHostname):\(socket.remotePort) closed...")
                         socket.close()
-                        socketLockQueue.sync
-                        { [unowned self, socket] in
+                        socketLockQueue.sync { [unowned self, socket] in
                                 self.connectedSockets[socket.socketfd] = nil
                         }
-                }
-                catch let error
-                {
+                } catch let error {
                         guard let socketError: Socket.Error = error as? Socket.Error
-                        else
-                        {
+                                else {
                                 print("Unexpected error by connection at \(socket.remoteHostname):\(socket.remotePort)...")
                                 return
                         }
-                        if self.isRunning
-                        {
+                        if self.isRunning {
                                 print("Error reported by connection at \(socket.remoteHostname):\(socket.remotePort):\n \(socketError.description)")
                         }
                 }
         }
 
-        private func handle(data: inout Data, socket: Socket, isConnected: inout Bool) throws
-        {
+        private func handle(data: inout Data, socket: Socket, isConnected: inout Bool) throws {
                 let bytesRead: Int = try socket.read(into: &data)
-                if bytesRead > 0
-                {
+                if bytesRead > 0 {
                         guard let message: String = String(data: data, encoding: .utf8)
-                        else
-                        {
+                                else {
                                 print("Error decoding response...")
                                 data.count = 0
                                 return
                         }
                         try response(message: message, socket: socket, isConnected: &isConnected)
                 }
-                if bytesRead == 0
-                {
+                if bytesRead == 0 {
                         isConnected = false
                         return
                 }
                 data.count = 0
         }
 
-        private func response(message: String, socket: Socket, isConnected: inout Bool) throws
-        {
+        private func response(message: String, socket: Socket, isConnected: inout Bool) throws {
 
                 // Drop the last: \n
                 let text: String = String(message.lowercased().dropLast())
 
-                switch text
-                {
+                switch text {
                 case EchoServer.quitCommand:
                         isConnected = false
                 case EchoServer.shutdownCommand:
@@ -162,17 +149,14 @@ class EchoServer
                 }
         }
 
-        private func shutdownServer()
-        {
+        private func shutdownServer() {
                 print("\nShutdown in progress...")
                 isRunning = false
-                connectedSockets.values.forEach
-                {
+                connectedSockets.values.forEach {
                         $0.close()
                 }
                 listenSocket?.close()
-                DispatchQueue.main.sync
-                {
+                DispatchQueue.main.sync {
                         exit(0)
                 }
         }
