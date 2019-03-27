@@ -3,7 +3,7 @@ netube
 
 ## How to build
 ### Requirements
-- Swift 4.2  
+- Swift 5.0  
 ### Build
 ```
 swift build
